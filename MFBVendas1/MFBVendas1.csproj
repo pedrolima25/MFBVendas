@@ -59,6 +59,12 @@
       <DependentUpon>CadastroClienteForm.cs</DependentUpon>
     </Compile>
     <Compile Include="conexao.cs" />
+    <Compile Include="Pdvform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pdvform.Designer.cs">
+      <DependentUpon>Pdvform.cs</DependentUpon>
+    </Compile>
     <Compile Include="ListaClientesForm.cs">
       <SubType>Form</SubType>
     </Compile>

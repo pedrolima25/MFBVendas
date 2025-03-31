@@ -23,6 +23,14 @@ namespace SistemaDeVendasMFB
                     conn.Open();
                 return conn;
             }
+            catch (SqlException sqlEx)
+            {
+                throw new Exception("Erro ao conectar ao banco de dados (SQL Exception): " + sqlEx.Message + " - Error Code: " + sqlEx.ErrorCode);
+            }
+            catch (InvalidOperationException invOpEx)
+            {
+                throw new Exception("Erro ao conectar ao banco de dados (Invalid Operation): " + invOpEx.Message);
+            }
             catch (Exception ex)
             {
                 throw new Exception("Erro ao conectar ao banco de dados: " + ex.Message);

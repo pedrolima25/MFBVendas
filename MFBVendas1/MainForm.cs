@@ -10,16 +10,22 @@ namespace SistemaDeVendasMFB
             InitializeComponent();
         }
 
-        private void btnProdutos_Click(object sender, EventArgs e)
+        private void btnGerenciarClientes_Click(object sender, EventArgs e)
+        {
+            ListaClientesForm listaClientesForm = new ListaClientesForm();
+            listaClientesForm.Show();
+        }
+
+        private void btnGerenciarProdutos_Click(object sender, EventArgs e)
         {
             ListaProdutosForm listaProdutosForm = new ListaProdutosForm();
             listaProdutosForm.Show();
         }
 
-        private void btnClientes_Click(object sender, EventArgs e)
+        private void btnPDV_Click(object sender, EventArgs e)
         {
-            ListaClientesForm listaClientesForm = new ListaClientesForm();
-            listaClientesForm.Show();
+            PDVForm pdvForm = new PDVForm();
+            pdvForm.Show();
         }
     }
 }

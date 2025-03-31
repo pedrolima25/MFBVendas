@@ -136,7 +136,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClientes)).EndInit();
             this.panelButtons.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
     }
 }

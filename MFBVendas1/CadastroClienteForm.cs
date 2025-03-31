@@ -31,8 +31,10 @@ namespace SistemaDeVendasMFB
                 if (reader.Read())
                 {
                     txtNomeCliente.Text = reader["nome"].ToString();
-                    txtEmail.Text = reader["email"].ToString();
+                    txtCPF_CNPJ.Text = reader["cpf_cnpj"].ToString();
                     txtTelefone.Text = reader["telefone"].ToString();
+                    txtEmail.Text = reader["email"].ToString();
+                    txtEndereco.Text = reader["endereco"].ToString();
                 }
                 dbConnection.FecharConexao();
             }
@@ -45,17 +47,19 @@ namespace SistemaDeVendasMFB
                 string query;
                 if (clienteId.HasValue)
                 {
-                    query = "UPDATE Clientes SET nome = @Nome, email = @Email, telefone = @Telefone WHERE ClienteId = @ClienteId";
+                    query = "UPDATE Clientes SET nome = @Nome, cpf_cnpj = @CPF_CNPJ, telefone = @Telefone, email = @Email, endereco = @Endereco WHERE ClienteId = @ClienteId";
                 }
                 else
                 {
-                    query = "INSERT INTO Clientes (nome, email, telefone) VALUES (@Nome, @Email, @Telefone)";
+                    query = "INSERT INTO Clientes (nome, cpf_cnpj, telefone, email, endereco) VALUES (@Nome, @CPF_CNPJ, @Telefone, @Email, @Endereco)";
                 }
 
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Nome", txtNomeCliente.Text);
-                command.Parameters.AddWithValue("@Email", txtEmail.Text);
+                command.Parameters.AddWithValue("@CPF_CNPJ", txtCPF_CNPJ.Text);
                 command.Parameters.AddWithValue("@Telefone", txtTelefone.Text);
+                command.Parameters.AddWithValue("@Email", txtEmail.Text);
+                command.Parameters.AddWithValue("@Endereco", txtEndereco.Text);
 
                 if (clienteId.HasValue)
                 {
