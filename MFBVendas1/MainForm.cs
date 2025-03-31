@@ -27,5 +27,16 @@ namespace SistemaDeVendasMFB
             PDVForm pdvForm = new PDVForm();
             pdvForm.Show();
         }
+
+        private void btnRelatorioVendas_Click(object sender, EventArgs e)
+        {
+            RelatorioVendasForm relatorioVendasForm = new RelatorioVendasForm();
+            relatorioVendasForm.Show();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

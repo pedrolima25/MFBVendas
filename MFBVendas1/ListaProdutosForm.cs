@@ -54,26 +54,33 @@ namespace SistemaDeVendasMFB
             if (dataGridViewProdutos.SelectedRows.Count > 0)
             {
                 int produtoId = Convert.ToInt32(dataGridViewProdutos.SelectedRows[0].Cells[0].Value);
-                using (SqlConnection connection = dbConnection.AbrirConexao())
+                if (dbConnection.TestarPermissaoDeletar())
                 {
-                    string query = "DELETE FROM Produtos WHERE ProdutoId = @ProdutoId";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@ProdutoId", produtoId);
+                    using (SqlConnection connection = dbConnection.AbrirConexao())
+                    {
+                        string query = "DELETE FROM Produtos WHERE ProdutoId = @ProdutoId";
+                        SqlCommand command = new SqlCommand(query, connection);
+                        command.Parameters.AddWithValue("@ProdutoId", produtoId);
 
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                        MessageBox.Show("Produto excluído com sucesso!");
-                        LoadProdutos();
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                            MessageBox.Show("Produto excluído com sucesso!");
+                            LoadProdutos();
+                        }
+                        catch (SqlException ex)
+                        {
+                            MessageBox.Show("Erro ao excluir o produto: " + ex.Message);
+                        }
+                        finally
+                        {
+                            dbConnection.FecharConexao();
+                        }
                     }
-                    catch (SqlException ex)
-                    {
-                        MessageBox.Show("Erro ao excluir o produto: " + ex.Message);
-                    }
-                    finally
-                    {
-                        dbConnection.FecharConexao();
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("Você não tem permissão para deletar produtos.");
                 }
             }
             else
@@ -82,4 +89,4 @@ namespace SistemaDeVendasMFB
             }
         }
     }
-}
+    }

@@ -59,6 +59,12 @@
       <DependentUpon>CadastroClienteForm.cs</DependentUpon>
     </Compile>
     <Compile Include="conexao.cs" />
+    <Compile Include="RelatorioVendasForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RelatorioVendasForm.Designer.cs">
+      <DependentUpon>RelatorioVendasForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pdvform.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +103,9 @@
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Pdvform.resx">
+      <DependentUpon>Pdvform.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -105,6 +114,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -118,6 +128,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-shopping-cart-online-shopping-e-commerce-shopping-cart-angle-service.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

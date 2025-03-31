@@ -10,6 +10,7 @@ namespace SistemaDeVendasMFB
     {
         private Conexao dbConnection;
         private DataTable dataTable;
+        private int? clienteId;
 
         public PDVForm()
         {
@@ -23,6 +24,39 @@ namespace SistemaDeVendasMFB
             dataTable.Columns.Add("Total");
             dataGridViewProdutos.DataSource = dataTable;
             AtualizarTotal();
+        }
+
+        private void PDVForm_Load(object sender, EventArgs e)
+        {
+            CarregarClientes();
+        }
+
+        private void CarregarClientes()
+        {
+            using (SqlConnection connection = dbConnection.AbrirConexao())
+            {
+                string query = "SELECT id, nome FROM Clientes";
+                SqlCommand command = new SqlCommand(query, connection);
+                SqlDataReader reader = command.ExecuteReader();
+                DataTable clienteTable = new DataTable();
+                clienteTable.Load(reader);
+                cmbClientes.DataSource = clienteTable;
+                cmbClientes.DisplayMember = "nome";
+                cmbClientes.ValueMember = "id";
+                dbConnection.FecharConexao();
+            }
+        }
+
+        private void cmbClientes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbClientes.SelectedItem != null)
+            {
+                DataRowView rowView = cmbClientes.SelectedItem as DataRowView;
+                if (rowView != null)
+                {
+                    clienteId = Convert.ToInt32(rowView["id"]);
+                }
+            }
         }
 
         private void btnAdicionarProduto_Click(object sender, EventArgs e)
@@ -142,6 +176,12 @@ namespace SistemaDeVendasMFB
                 return;
             }
 
+            if (!clienteId.HasValue)
+            {
+                MessageBox.Show("Nenhum cliente selecionado.");
+                return;
+            }
+
             using (SqlConnection connection = dbConnection.AbrirConexao())
             {
                 SqlTransaction transaction = connection.BeginTransaction();
@@ -150,7 +190,7 @@ namespace SistemaDeVendasMFB
                     // Insere a venda e obtém o id da venda
                     string query = "INSERT INTO Vendas (id_cliente, data_venda, total) OUTPUT INSERTED.id VALUES (@IdCliente, @Data, @Total)";
                     SqlCommand command = new SqlCommand(query, connection, transaction);
-                    command.Parameters.AddWithValue("@IdCliente", 1); // Supondo que o id_cliente é 1 para este exemplo
+                    command.Parameters.AddWithValue("@IdCliente", clienteId.Value);
                     command.Parameters.AddWithValue("@Data", DateTime.Now);
                     command.Parameters.AddWithValue("@Total", decimal.Parse(txtTotal.Text, NumberStyles.Currency, CultureInfo.CurrentCulture));
                     int vendaId = (int)command.ExecuteScalar();

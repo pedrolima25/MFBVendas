@@ -24,7 +24,7 @@ namespace SistemaDeVendasMFB
         {
             using (SqlConnection connection = dbConnection.AbrirConexao())
             {
-                string query = "SELECT * FROM Clientes WHERE ClienteId = @ClienteId";
+                string query = "SELECT * FROM Clientes WHERE id = @ClienteId";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@ClienteId", clienteId);
                 SqlDataReader reader = command.ExecuteReader();
@@ -36,7 +36,6 @@ namespace SistemaDeVendasMFB
                     txtEmail.Text = reader["email"].ToString();
                     txtEndereco.Text = reader["endereco"].ToString();
                 }
-                dbConnection.FecharConexao();
             }
         }
 
@@ -47,7 +46,7 @@ namespace SistemaDeVendasMFB
                 string query;
                 if (clienteId.HasValue)
                 {
-                    query = "UPDATE Clientes SET nome = @Nome, cpf_cnpj = @CPF_CNPJ, telefone = @Telefone, email = @Email, endereco = @Endereco WHERE ClienteId = @ClienteId";
+                    query = "UPDATE Clientes SET nome = @Nome, cpf_cnpj = @CPF_CNPJ, telefone = @Telefone, email = @Email, endereco = @Endereco WHERE id = @ClienteId";
                 }
                 else
                 {
@@ -67,9 +66,28 @@ namespace SistemaDeVendasMFB
                 }
 
                 command.ExecuteNonQuery();
-                dbConnection.FecharConexao();
                 MessageBox.Show("Cliente salvo com sucesso!");
                 this.Close();
+            }
+        }
+
+        private void btnDeletar_Click(object sender, EventArgs e)
+        {
+            if (clienteId.HasValue)
+            {
+                using (SqlConnection connection = dbConnection.AbrirConexao())
+                {
+                    string query = "DELETE FROM Clientes WHERE id = @ClienteId";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@ClienteId", clienteId);
+                    command.ExecuteNonQuery();
+                    MessageBox.Show("Cliente deletado com sucesso!");
+                    this.Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhum cliente selecionado para deletar.");
             }
         }
 

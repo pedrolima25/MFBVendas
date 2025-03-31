@@ -22,9 +22,11 @@ namespace SistemaDeVendasMFB
 
         private void LoadProduto()
         {
-            using (SqlConnection connection = dbConnection.AbrirConexao())
+            SqlConnection connection = null;
+            try
             {
-                string query = "SELECT * FROM Produtos WHERE ProdutoId = @ProdutoId";
+                connection = dbConnection.AbrirConexao();
+                string query = "SELECT * FROM Produtos WHERE codigo = @ProdutoId";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@ProdutoId", produtoId);
                 SqlDataReader reader = command.ExecuteReader();
@@ -34,18 +36,30 @@ namespace SistemaDeVendasMFB
                     txtPreco.Text = reader["preco"].ToString();
                     txtQuantidade.Text = reader["estoque"].ToString();
                 }
-                dbConnection.FecharConexao();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar produto: " + ex.Message);
+            }
+            finally
+            {
+                if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                {
+                    dbConnection.FecharConexao();
+                }
             }
         }
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            using (SqlConnection connection = dbConnection.AbrirConexao())
+            SqlConnection connection = null;
+            try
             {
+                connection = dbConnection.AbrirConexao();
                 string query;
                 if (produtoId.HasValue)
                 {
-                    query = "UPDATE Produtos SET nome = @Nome, preco = @Preco, estoque = @Estoque WHERE ProdutoId = @ProdutoId";
+                    query = "UPDATE Produtos SET nome = @Nome, preco = @Preco, estoque = @Estoque WHERE codigo = @ProdutoId";
                 }
                 else
                 {
@@ -63,15 +77,75 @@ namespace SistemaDeVendasMFB
                 }
 
                 command.ExecuteNonQuery();
-                dbConnection.FecharConexao();
                 MessageBox.Show("Produto salvo com sucesso!");
                 this.Close();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao salvar produto: " + ex.Message);
+            }
+            finally
+            {
+                if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                {
+                    dbConnection.FecharConexao();
+                }
+            }
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e)
+        private void btnExcluir_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (!produtoId.HasValue)
+            {
+                MessageBox.Show("Nenhum produto selecionado para exclusão.");
+                return;
+            }
+
+            SqlConnection connection = null;
+            try
+            {
+                connection = dbConnection.AbrirConexao();
+
+                // Verificar se o produto existe
+                string selectQuery = "SELECT [codigo], [nome], [preco], [estoque] FROM [dbo].[Produtos] WHERE [codigo] = @ProdutoId";
+                SqlCommand selectCommand = new SqlCommand(selectQuery, connection);
+                selectCommand.Parameters.AddWithValue("@ProdutoId", produtoId);
+                SqlDataReader reader = selectCommand.ExecuteReader();
+
+                if (!reader.Read())
+                {
+                    MessageBox.Show("Produto não encontrado.");
+                    return;
+                }
+                reader.Close();
+
+                // Verificar permissão para deletar
+                if (!dbConnection.TestarPermissaoDeletar())
+                {
+                    MessageBox.Show("Você não tem permissão para deletar produtos.");
+                    return;
+                }
+
+                // Deletar o produto
+                string deleteQuery = "DELETE FROM Produtos WHERE codigo = @ProdutoId";
+                SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
+                deleteCommand.Parameters.AddWithValue("@ProdutoId", produtoId);
+                deleteCommand.ExecuteNonQuery();
+
+                MessageBox.Show("Produto excluído com sucesso!");
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao excluir produto: " + ex.Message);
+            }
+            finally
+            {
+                if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                {
+                    dbConnection.FecharConexao();
+                }
+            }
         }
     }
 }

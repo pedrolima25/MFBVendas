@@ -1,4 +1,6 @@
-﻿namespace SistemaDeVendasMFB
+﻿using System;
+
+namespace SistemaDeVendasMFB
 {
     partial class CadastroProdutoForm
     {
@@ -134,5 +136,11 @@
         private System.Windows.Forms.TextBox txtQuantidade;
         private System.Windows.Forms.Button btnSalvar;
         private System.Windows.Forms.Button btnCancelar;
+
+        // Adicione este método para lidar com o evento Click do botão Cancelar
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
