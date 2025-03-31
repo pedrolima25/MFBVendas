@@ -23,8 +23,8 @@ namespace SistemaDeVendasMFB
                 return;
             }
 
-            DateTime dataInicio = dtpDataInicio.Value;
-            DateTime dataFim = dtpDataFim.Value;
+            DateTime dataInicio = dtpDataInicio.Value.Date;
+            DateTime dataFim = dtpDataFim.Value.Date;
 
             string query = string.Empty;
 
@@ -35,7 +35,7 @@ namespace SistemaDeVendasMFB
                             "FROM ItensVenda iv " +
                             "JOIN Produtos p ON iv.id_produto = p.codigo " +
                             "JOIN Vendas v ON iv.id_venda = v.id " +
-                            "WHERE v.data_venda BETWEEN @DataInicio AND @DataFim";
+                            "WHERE CAST(v.data_venda AS DATE) BETWEEN @DataInicio AND @DataFim";
                     break;
                 case "Produtos Vendidos por Cliente":
                     query = "SELECT c.nome AS Cliente, p.codigo, p.nome, iv.quantidade, iv.preco_unitario, iv.subtotal " +
@@ -43,27 +43,52 @@ namespace SistemaDeVendasMFB
                             "JOIN Produtos p ON iv.id_produto = p.codigo " +
                             "JOIN Vendas v ON iv.id_venda = v.id " +
                             "JOIN Clientes c ON v.id_cliente = c.id " +
-                            "WHERE v.data_venda BETWEEN @DataInicio AND @DataFim";
+                            "WHERE CAST(v.data_venda AS DATE) BETWEEN @DataInicio AND @DataFim";
                     break;
                 case "Vendas Realizadas aos Clientes":
-                    query = "SELECT v.id, c.nome AS Cliente, v.data_venda, v.total, v.forma_pagamento " +
+                    query = "SELECT v.id, c.nome AS Cliente, v.data_venda, v.total " +
                             "FROM Vendas v " +
                             "JOIN Clientes c ON v.id_cliente = c.id " +
-                            "WHERE v.data_venda BETWEEN @DataInicio AND @DataFim";
+                            "WHERE CAST(v.data_venda AS DATE) BETWEEN @DataInicio AND @DataFim";
                     break;
             }
 
-            using (SqlConnection connection = dbConnection.AbrirConexao())
+            if (string.IsNullOrEmpty(query))
             {
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DataInicio", dataInicio);
-                command.Parameters.AddWithValue("@DataFim", dataFim);
-                SqlDataAdapter adapter = new SqlDataAdapter(command);
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
-                dataGridViewRelatorio.DataSource = dataTable;
+                MessageBox.Show("Erro ao gerar a consulta SQL.");
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection connection = dbConnection.AbrirConexao())
+                {
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@DataInicio", dataInicio);
+                    command.Parameters.AddWithValue("@DataFim", dataFim);
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    if (dataTable.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Nenhum dado encontrado para o período selecionado.");
+                    }
+                    else
+                    {
+                        dataGridViewRelatorio.DataSource = dataTable;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao gerar o relatório: " + ex.Message);
+            }
+            finally
+            {
                 dbConnection.FecharConexao();
             }
         }
     }
 }
+
