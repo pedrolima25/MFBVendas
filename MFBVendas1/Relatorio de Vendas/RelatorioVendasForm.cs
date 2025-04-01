@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.IO;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace SistemaDeVendasMFB
 {
@@ -46,8 +47,6 @@ namespace SistemaDeVendasMFB
                             "JOIN Clientes c ON v.id_cliente = c.id " +
                             "WHERE CAST(v.data_venda AS DATE) BETWEEN @DataInicio AND @DataFim";
                     break;
-               
-                   
             }
 
             if (string.IsNullOrEmpty(query))
@@ -93,10 +92,8 @@ namespace SistemaDeVendasMFB
             dataGridViewRelatorio.Columns["codigo"].HeaderText = "Código";
             dataGridViewRelatorio.Columns["nome"].HeaderText = "Nome";
             dataGridViewRelatorio.Columns["quantidade"].HeaderText = "Quantidade";
-           
             dataGridViewRelatorio.Columns["forma_pagamento"].HeaderText = "Forma de Pagamento";
             dataGridViewRelatorio.Columns["subtotal"].HeaderText = "Subtotal";
-
             dataGridViewRelatorio.Columns["preco_unitario"].DefaultCellStyle.Format = "C2";
             dataGridViewRelatorio.Columns["subtotal"].DefaultCellStyle.Format = "C2";
         }
@@ -109,40 +106,45 @@ namespace SistemaDeVendasMFB
                 return;
             }
 
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
-            saveFileDialog.Title = "Salvar Relatório";
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel files (*.xls)|*.xls|All files (*.*)|*.*",
+                Title = "Salvar Relatório",
+                FileName = "RelatorioVendas.xls" // Nome padrão do arquivo
+            };
+
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
-                    {
-                        // Escrever cabeçalhos
-                        for (int i = 0; i < dataGridViewRelatorio.Columns.Count; i++)
-                        {
-                            writer.Write(dataGridViewRelatorio.Columns[i].HeaderText);
-                            if (i < dataGridViewRelatorio.Columns.Count - 1)
-                            {
-                                writer.Write(",");
-                            }
-                        }
-                        writer.WriteLine();
+                    Excel.Application excelApp = new Excel.Application();
+                    Excel.Workbook workbook = excelApp.Workbooks.Add();
+                    Excel.Worksheet worksheet = workbook.Sheets[1];
+                    worksheet.Name = "Relatório de Vendas";
 
-                        // Escrever dados
-                        foreach (DataGridViewRow row in dataGridViewRelatorio.Rows)
+                    // Escrever título
+                    worksheet.Cells[1, 1] = "Relatório de Vendas";
+                    worksheet.Cells[2, 1] = $"Período: {dtpDataInicio.Value.ToShortDateString()} - {dtpDataFim.Value.ToShortDateString()}";
+
+                    // Escrever cabeçalhos
+                    for (int i = 0; i < dataGridViewRelatorio.Columns.Count; i++)
+                    {
+                        worksheet.Cells[4, i + 1] = dataGridViewRelatorio.Columns[i].HeaderText;
+                    }
+
+                    // Escrever dados
+                    for (int i = 0; i < dataGridViewRelatorio.Rows.Count; i++)
+                    {
+                        for (int j = 0; j < dataGridViewRelatorio.Columns.Count; j++)
                         {
-                            for (int i = 0; i < dataGridViewRelatorio.Columns.Count; i++)
-                            {
-                                writer.Write(row.Cells[i].Value);
-                                if (i < dataGridViewRelatorio.Columns.Count - 1)
-                                {
-                                    writer.Write(",");
-                                }
-                            }
-                            writer.WriteLine();
+                            worksheet.Cells[i + 5, j + 1] = dataGridViewRelatorio.Rows[i].Cells[j].Value;
                         }
                     }
+
+                    workbook.SaveAs(saveFileDialog.FileName);
+                    workbook.Close();
+                    excelApp.Quit();
+
                     MessageBox.Show("Relatório exportado com sucesso!");
                 }
                 catch (Exception ex)
@@ -151,6 +153,15 @@ namespace SistemaDeVendasMFB
                 }
             }
         }
+
+        private void dataGridViewRelatorio_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void RelatorioVendasForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
-

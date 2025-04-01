@@ -49,6 +49,11 @@ namespace SistemaDeVendasMFB
         {
 
         }
+
+        private void panelContent_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
 
