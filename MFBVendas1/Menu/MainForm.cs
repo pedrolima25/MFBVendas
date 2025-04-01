@@ -12,18 +12,19 @@ namespace SistemaDeVendasMFB
 
         private void btnGerenciarClientes_Click(object sender, EventArgs e)
         {
-            ListaClientesForm listaClientesForm = new ListaClientesForm();
-            listaClientesForm.Show();
+            CadastroClienteForm cadastroClienteForm = new CadastroClienteForm();
+            cadastroClienteForm.Show();
         }
 
         private void btnGerenciarProdutos_Click(object sender, EventArgs e)
         {
-            ListaProdutosForm listaProdutosForm = new ListaProdutosForm();
-            listaProdutosForm.Show();
+            CadastroProdutoForm cadastroProdutoForm = new CadastroProdutoForm();
+            cadastroProdutoForm.Show();
         }
 
         private void btnPDV_Click(object sender, EventArgs e)
         {
+            
             PDVForm pdvForm = new PDVForm();
             pdvForm.Show();
         }
@@ -34,9 +35,22 @@ namespace SistemaDeVendasMFB
             relatorioVendasForm.Show();
         }
 
+        private void btnSair_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblTitulo_Click(object sender, EventArgs e)
         {
 
         }
     }
 }
+
+
+

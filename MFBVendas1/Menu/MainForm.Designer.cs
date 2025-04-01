@@ -7,6 +7,7 @@
         private System.Windows.Forms.Button btnGerenciarProdutos;
         private System.Windows.Forms.Button btnPDV;
         private System.Windows.Forms.Button btnRelatorioVendas;
+        private System.Windows.Forms.Button btnSair;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Panel panelHeader;
         private System.Windows.Forms.Panel panelContent;
@@ -25,6 +26,7 @@
             this.panelHeader = new System.Windows.Forms.Panel();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.panelContent = new System.Windows.Forms.Panel();
+            this.btnSair = new System.Windows.Forms.Button();
             this.btnRelatorioVendas = new System.Windows.Forms.Button();
             this.btnGerenciarClientes = new System.Windows.Forms.Button();
             this.btnGerenciarProdutos = new System.Windows.Forms.Button();
@@ -50,12 +52,14 @@
             this.lblTitulo.ForeColor = System.Drawing.Color.White;
             this.lblTitulo.Location = new System.Drawing.Point(12, 9);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(307, 37);
+            this.lblTitulo.Size = new System.Drawing.Size(385, 37);
             this.lblTitulo.TabIndex = 0;
-            this.lblTitulo.Text = "Sistema de Vendas";
+            this.lblTitulo.Text = "Sistema de Vendas MFB";
+            this.lblTitulo.Click += new System.EventHandler(this.lblTitulo_Click);
             // 
             // panelContent
             // 
+            this.panelContent.Controls.Add(this.btnSair);
             this.panelContent.Controls.Add(this.btnRelatorioVendas);
             this.panelContent.Controls.Add(this.btnGerenciarClientes);
             this.panelContent.Controls.Add(this.btnGerenciarProdutos);
@@ -65,6 +69,19 @@
             this.panelContent.Name = "panelContent";
             this.panelContent.Size = new System.Drawing.Size(784, 401);
             this.panelContent.TabIndex = 1;
+            // 
+            // btnSair
+            // 
+            this.btnSair.BackColor = System.Drawing.Color.Navy;
+            this.btnSair.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSair.ForeColor = System.Drawing.Color.White;
+            this.btnSair.Location = new System.Drawing.Point(19, 243);
+            this.btnSair.Name = "btnSair";
+            this.btnSair.Size = new System.Drawing.Size(200, 50);
+            this.btnSair.TabIndex = 4;
+            this.btnSair.Text = "Sair";
+            this.btnSair.UseVisualStyleBackColor = false;
+            this.btnSair.Click += new System.EventHandler(this.btnSair_Click);
             // 
             // btnRelatorioVendas
             // 
@@ -142,3 +159,5 @@
         }
     }
 }
+
+

@@ -11,6 +11,7 @@
         private System.Windows.Forms.DataGridView dataGridViewRelatorio;
         private System.Windows.Forms.ComboBox cmbTipoRelatorio;
         private System.Windows.Forms.Label lblTipoRelatorio;
+        private System.Windows.Forms.Button btnExportar;
 
         protected override void Dispose(bool disposing)
         {
@@ -31,6 +32,7 @@
             this.dataGridViewRelatorio = new System.Windows.Forms.DataGridView();
             this.cmbTipoRelatorio = new System.Windows.Forms.ComboBox();
             this.lblTipoRelatorio = new System.Windows.Forms.Label();
+            this.btnExportar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRelatorio)).BeginInit();
             this.SuspendLayout();
             // 
@@ -39,7 +41,7 @@
             this.lblDataInicio.AutoSize = true;
             this.lblDataInicio.Location = new System.Drawing.Point(12, 15);
             this.lblDataInicio.Name = "lblDataInicio";
-            this.lblDataInicio.Size = new System.Drawing.Size(58, 13);
+            this.lblDataInicio.Size = new System.Drawing.Size(60, 13);
             this.lblDataInicio.TabIndex = 0;
             this.lblDataInicio.Text = "Data Início";
             // 
@@ -55,7 +57,7 @@
             this.lblDataFim.AutoSize = true;
             this.lblDataFim.Location = new System.Drawing.Point(282, 15);
             this.lblDataFim.Name = "lblDataFim";
-            this.lblDataFim.Size = new System.Drawing.Size(51, 13);
+            this.lblDataFim.Size = new System.Drawing.Size(49, 13);
             this.lblDataFim.TabIndex = 2;
             this.lblDataFim.Text = "Data Fim";
             // 
@@ -70,7 +72,7 @@
             // 
             this.btnGerarRelatorio.Location = new System.Drawing.Point(545, 10);
             this.btnGerarRelatorio.Name = "btnGerarRelatorio";
-            this.btnGerarRelatorio.Size = new System.Drawing.Size(75, 23);
+            this.btnGerarRelatorio.Size = new System.Drawing.Size(100, 23);
             this.btnGerarRelatorio.TabIndex = 4;
             this.btnGerarRelatorio.Text = "Gerar Relatório";
             this.btnGerarRelatorio.UseVisualStyleBackColor = true;
@@ -81,7 +83,7 @@
             this.dataGridViewRelatorio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewRelatorio.Location = new System.Drawing.Point(15, 68);
             this.dataGridViewRelatorio.Name = "dataGridViewRelatorio";
-            this.dataGridViewRelatorio.Size = new System.Drawing.Size(600, 200);
+            this.dataGridViewRelatorio.Size = new System.Drawing.Size(630, 250);
             this.dataGridViewRelatorio.TabIndex = 5;
             // 
             // cmbTipoRelatorio
@@ -90,9 +92,8 @@
             this.cmbTipoRelatorio.FormattingEnabled = true;
             this.cmbTipoRelatorio.Items.AddRange(new object[] {
             "Produtos Vendidos",
-            "Produtos Vendidos por Cliente",
-            "Vendas Realizadas aos Clientes"});
-            this.cmbTipoRelatorio.Location = new System.Drawing.Point(76, 38);
+            "Produtos Vendidos por Cliente"});
+            this.cmbTipoRelatorio.Location = new System.Drawing.Point(91, 38);
             this.cmbTipoRelatorio.Name = "cmbTipoRelatorio";
             this.cmbTipoRelatorio.Size = new System.Drawing.Size(200, 21);
             this.cmbTipoRelatorio.TabIndex = 6;
@@ -102,15 +103,26 @@
             this.lblTipoRelatorio.AutoSize = true;
             this.lblTipoRelatorio.Location = new System.Drawing.Point(12, 41);
             this.lblTipoRelatorio.Name = "lblTipoRelatorio";
-            this.lblTipoRelatorio.Size = new System.Drawing.Size(58, 13);
+            this.lblTipoRelatorio.Size = new System.Drawing.Size(73, 13);
             this.lblTipoRelatorio.TabIndex = 7;
             this.lblTipoRelatorio.Text = "Tipo Relatório";
+            // 
+            // btnExportar
+            // 
+            this.btnExportar.Location = new System.Drawing.Point(545, 38);
+            this.btnExportar.Name = "btnExportar";
+            this.btnExportar.Size = new System.Drawing.Size(100, 23);
+            this.btnExportar.TabIndex = 8;
+            this.btnExportar.Text = "Exportar Excel";
+            this.btnExportar.UseVisualStyleBackColor = true;
+            this.btnExportar.Click += new System.EventHandler(this.btnExportar_Click);
             // 
             // RelatorioVendasForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(634, 281);
+            this.ClientSize = new System.Drawing.Size(664, 341);
+            this.Controls.Add(this.btnExportar);
             this.Controls.Add(this.lblTipoRelatorio);
             this.Controls.Add(this.cmbTipoRelatorio);
             this.Controls.Add(this.dataGridViewRelatorio);
@@ -120,6 +132,7 @@
             this.Controls.Add(this.dtpDataInicio);
             this.Controls.Add(this.lblDataInicio);
             this.Name = "RelatorioVendasForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Relatório de Vendas";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRelatorio)).EndInit();
             this.ResumeLayout(false);

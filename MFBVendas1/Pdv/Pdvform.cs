@@ -24,8 +24,48 @@ namespace SistemaDeVendasMFB
             dataTable.Columns.Add("Total");
             dataGridViewProdutos.DataSource = dataTable;
             AtualizarTotal();
+            txtCodigoProduto.KeyDown += new KeyEventHandler(txtCodigoProduto_KeyDown);
+            txtNomeProduto.KeyDown += new KeyEventHandler(txtNomeProduto_KeyDown);
+            txtNomeProduto.AutoCompleteCustomSource = new AutoCompleteStringCollection();
+
+            CarregarNomesProdutos();
         }
 
+        private void CarregarNomesProdutos()
+        {
+            using (SqlConnection connection = dbConnection.AbrirConexao())
+            {
+                string query = "SELECT nome FROM Produtos";
+                SqlCommand command = new SqlCommand(query, connection);
+                SqlDataReader reader = command.ExecuteReader();
+                AutoCompleteStringCollection nomesProdutos = new AutoCompleteStringCollection();
+                while (reader.Read())
+                {
+                    nomesProdutos.Add(reader["nome"].ToString());
+                }
+                txtNomeProduto.AutoCompleteCustomSource = nomesProdutos;
+                dbConnection.FecharConexao();
+            }
+        }
+        private void txtCodigoProduto_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                AdicionarProdutoPorCodigo(txtCodigoProduto.Text);
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void txtNomeProduto_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                PesquisarProdutoPorNome(txtNomeProduto.Text);
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
         private void PDVForm_Load(object sender, EventArgs e)
         {
             CarregarClientes();
@@ -74,6 +114,12 @@ namespace SistemaDeVendasMFB
             if (string.IsNullOrEmpty(codigoProduto))
             {
                 MessageBox.Show("Por favor, insira o código do produto.");
+                return;
+            }
+
+            if (!int.TryParse(codigoProduto, out int codigoProdutoInt))
+            {
+                MessageBox.Show("Código do produto deve ser um número.");
                 return;
             }
 
@@ -182,17 +228,30 @@ namespace SistemaDeVendasMFB
                 return;
             }
 
+            if (cmbFormaPagamento.SelectedIndex == -1)
+            {
+                MessageBox.Show("Por favor, selecione a forma de pagamento.");
+                return;
+            }
+
+            if (cmbFormaPagamento.SelectedItem.ToString() == "Dinheiro" && string.IsNullOrEmpty(txtValorRecebido.Text))
+            {
+                MessageBox.Show("Por favor, insira o valor recebido.");
+                return;
+            }
+
             using (SqlConnection connection = dbConnection.AbrirConexao())
             {
                 SqlTransaction transaction = connection.BeginTransaction();
                 try
                 {
                     // Insere a venda e obtém o id da venda
-                    string query = "INSERT INTO Vendas (id_cliente, data_venda, total) OUTPUT INSERTED.id VALUES (@IdCliente, @Data, @Total)";
+                    string query = "INSERT INTO Vendas (id_cliente, data_venda, total, forma_pagamento) OUTPUT INSERTED.id VALUES (@IdCliente, @Data, @Total, @FormaPagamento)";
                     SqlCommand command = new SqlCommand(query, connection, transaction);
                     command.Parameters.AddWithValue("@IdCliente", clienteId.Value);
                     command.Parameters.AddWithValue("@Data", DateTime.Now);
                     command.Parameters.AddWithValue("@Total", decimal.Parse(txtTotal.Text, NumberStyles.Currency, CultureInfo.CurrentCulture));
+                    command.Parameters.AddWithValue("@FormaPagamento", cmbFormaPagamento.SelectedItem.ToString());
                     int vendaId = (int)command.ExecuteScalar();
 
                     // Insere os itens da venda
@@ -210,8 +269,11 @@ namespace SistemaDeVendasMFB
 
                     transaction.Commit();
                     MessageBox.Show("Venda finalizada com sucesso!");
+                    string recibo = GerarRecibo();
+                    MessageBox.Show(recibo, "Recibo");
                     dataTable.Clear();
                     AtualizarTotal();
+                    LimparCampos();
                 }
                 catch (Exception ex)
                 {
@@ -226,6 +288,160 @@ namespace SistemaDeVendasMFB
         {
             dataTable.Clear();
             AtualizarTotal();
+            LimparCampos();
+        }
+
+        private void LimparCampos()
+        {
+            txtCodigoProduto.Clear();
+            txtNomeProduto.Clear();
+            cmbFormaPagamento.SelectedIndex = -1;
+            txtValorRecebido.Clear();
+            txtTroco.Clear();
+        }
+
+        private void txtValorRecebido_TextChanged(object sender, EventArgs e)
+        {
+            if (cmbFormaPagamento.SelectedItem != null && cmbFormaPagamento.SelectedItem.ToString() == "Dinheiro")
+            {
+                if (decimal.TryParse(txtValorRecebido.Text, out decimal valorRecebido))
+                {
+                    decimal total = decimal.Parse(txtTotal.Text, NumberStyles.Currency, CultureInfo.CurrentCulture);
+                    decimal troco = valorRecebido - total;
+                    txtTroco.Text = troco > 0 ? troco.ToString("C") : "0,00";
+                }
+                else
+                {
+                    txtTroco.Text = "0,00";
+                }
+            }
+        }
+
+        private void cmbFormaPagamento_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbFormaPagamento.SelectedItem != null && cmbFormaPagamento.SelectedItem.ToString() == "Dinheiro")
+            {
+                lblValorRecebido.Visible = true;
+                txtValorRecebido.Visible = true;
+                lblTroco.Visible = true;
+                txtTroco.Visible = true;
+            }
+            else
+            {
+                lblValorRecebido.Visible = false;
+                txtValorRecebido.Visible = false;
+                lblTroco.Visible = false;
+                txtTroco.Visible = false;
+            }
+        }
+
+        private void btnGerarRecibo_Click(object sender, EventArgs e)
+        {
+            if (dataTable.Rows.Count == 0)
+            {
+                MessageBox.Show("Nenhum produto adicionado.");
+                return;
+            }
+
+            if (!clienteId.HasValue)
+            {
+                MessageBox.Show("Nenhum cliente selecionado.");
+                return;
+            }
+
+            string recibo = GerarRecibo();
+            MessageBox.Show(recibo, "Recibo");
+        }
+
+        private string GerarRecibo()
+        {
+            string recibo = "Recibo de Venda\n";
+            recibo += "-----------------------------\n";
+            recibo += $"Cliente: {cmbClientes.Text}\n";
+            recibo += $"Data: {DateTime.Now}\n";
+            recibo += "-----------------------------\n";
+            recibo += "Produtos:\n";
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                recibo += $"{row["Produto"]} - {row["Quantidade"]} x {row["Preço Unitário"]:C} = {row["Total"]:C}\n";
+            }
+
+            recibo += "-----------------------------\n";
+            recibo += $"Total: {txtTotal.Text}\n";
+            recibo += $"Forma de Pagamento: {cmbFormaPagamento.SelectedItem}\n";
+
+            if (cmbFormaPagamento.SelectedItem != null && cmbFormaPagamento.SelectedItem.ToString() == "Dinheiro")
+            {
+                recibo += $"Valor Recebido: {txtValorRecebido.Text}\n";
+                recibo += $"Troco: {txtTroco.Text}\n";
+            }
+
+            recibo += "-----------------------------\n";
+            recibo += "Obrigado pela sua compra!\n";
+
+            return recibo;
+        }
+
+
+        private void lblTotal_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblCodigoProduto_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblNomeProduto_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblNomeCliente_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblCodigoProduto_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblNomeCliente_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblNomeProduto_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblFormaPagamento_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblTotal_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblValorRecebido_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblTroco_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridViewProdutos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
