@@ -46,64 +46,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CadastroProdutoForm.cs">
+    <Compile Include="Gerenciador de Produto\CadastroProdutoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CadastroProdutoForm.Designer.cs">
+    <Compile Include="Gerenciador de Produto\CadastroProdutoForm.Designer.cs">
       <DependentUpon>CadastroProdutoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CadastroClienteForm.cs">
+    <Compile Include="Gerenciador de Clientes\CadastroClienteForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CadastroClienteForm.Designer.cs">
+    <Compile Include="Gerenciador de Clientes\CadastroClienteForm.Designer.cs">
       <DependentUpon>CadastroClienteForm.cs</DependentUpon>
     </Compile>
     <Compile Include="conexao.cs" />
-    <Compile Include="RelatorioVendasForm.cs">
+    <Compile Include="Relatorio de Vendas\RelatorioVendasForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RelatorioVendasForm.Designer.cs">
+    <Compile Include="Relatorio de Vendas\RelatorioVendasForm.Designer.cs">
       <DependentUpon>RelatorioVendasForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pdvform.cs">
+    <Compile Include="Pdv\Pdvform.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Pdvform.Designer.cs">
+    <Compile Include="Pdv\Pdvform.Designer.cs">
       <DependentUpon>Pdvform.cs</DependentUpon>
     </Compile>
-    <Compile Include="ListaClientesForm.cs">
+    <Compile Include="Menu\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ListaClientesForm.Designer.cs">
-      <DependentUpon>ListaClientesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ListaProdutosForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ListaProdutosForm.Designer.cs">
-      <DependentUpon>ListaProdutosForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Menu\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CadastroClienteForm.resx">
+    <EmbeddedResource Include="Gerenciador de Clientes\CadastroClienteForm.resx">
       <DependentUpon>CadastroClienteForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CadastroProdutoForm.resx">
+    <EmbeddedResource Include="Gerenciador de Produto\CadastroProdutoForm.resx">
       <DependentUpon>CadastroProdutoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ListaProdutosForm.resx">
-      <DependentUpon>ListaProdutosForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Menu\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pdvform.resx">
+    <EmbeddedResource Include="Pdv\Pdvform.resx">
       <DependentUpon>Pdvform.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -116,6 +101,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Relatorio de Vendas\RelatorioVendasForm.resx">
+      <DependentUpon>RelatorioVendasForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
